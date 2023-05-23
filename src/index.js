@@ -1,6 +1,6 @@
 // Import necessary packages
 require('dotenv/config'); // Load environment variables from .env file
-const {Client, IntentsBitField, messageLink} = require('discord.js'); // Package for interacting with Discord API
+const {Client, IntentsBitField} = require('discord.js'); // Package for interacting with Discord API
 const {Configuration, OpenAIApi} = require("openai"); // Package for interacting with OpenAI API
 
 // Create a new instance of Discord client
@@ -51,14 +51,24 @@ client.on('messageCreate', async (message) => {
         });
     })
 
-    // Send the conversation log to OpenAI APIfor generating a response
-    const result = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo', // The name of the OpenAI API model to use for generating a response
-        messages: conversationLog, // The conversation log to use as context for generating a response
-    })
 
-    // Send the generated response as a reply to the original message
-    message.reply(result.data.choices[0].message);
+    try {
+        // Send the conversation log to OpenAI APIfor generating a response
+        const result = await openai.createChatCompletion({
+            model: 'text-davinci-003', // The name of the OpenAI API model to use for generating a response
+            messages: conversationLog, // The conversation log to use as context for generating a response
+        });
+        console.log(result.data);
+        // Send the generated response as a reply to the original message
+        message.reply(result.data.choices[0].text);
+    } catch (error) {
+        console.log(`there was an error: ${error}`);
+        message.reply(`ʟᴇᴀᴠᴇ ᴍᴇ ᴀʟᴏɴᴇ`)
+        message.reply(`https://gifdb.com/images/high/evangelion-unit-01-hand-pul6jrgphfctvv8u.gif`);
+
+    }
+
+
 })
 
 // Log in to Discord using the bot token stored in the environment variable TOKEN
